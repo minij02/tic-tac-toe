@@ -17,14 +17,15 @@ function Game() {
     const winner = calculateWinner(currentSquares); // 승자 계산
 
     /**
-     * handleTimeUp - 시간이 다 되었을 때 자동으로 빈 칸 중 하나에 수를 둠.
+     * handleTimeUp - 시간이 다 되었을 때 턴을 넘김.
      */
     const handleTimeUp = () => {
-        // 빈 칸을 찾아서 자동으로 수를 둠
-        const emptyIndex = currentSquares.findIndex((square) => square === null);
-        if (emptyIndex !== -1 && !winner) {
-            handleClick(emptyIndex); // 빈 칸에 수를 둠
-            resetTimer(); // 시간이 다 되어 수를 둔 경우에도 타이머를 리셋
+        // 시간이 다 되었을 때, 다음 플레이어로 턴을 넘김
+        if (!winner) {
+            setXIsNext(!xIsNext);
+            setPreviewIndex(null);
+            setPreviewSquares(Array(9).fill(null)); // 미리보기 초기화
+            resetTimer(); // 타이머 리셋
         }
     }
   
