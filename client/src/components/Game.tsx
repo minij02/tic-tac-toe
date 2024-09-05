@@ -9,6 +9,8 @@ function Game() {
     const [history, setHistory] = useState([Array(9).fill(null)]);
     const [stepNumber, setStepNumber] = useState(0);
     const [xIsNext, setXIsNext] = useState(true);
+    const [previewSquares, setPreviewSquares] = useState(Array(9).fill(null)); // 미리보기 상태 추가
+    const [previewIndex, setPreviewIndex] = useState<number | null>(null); // 미리보기가 적용된 칸의 인덱스
     const [ascending, setAscending] = useState(true);
   
     const currentSquares = history[stepNumber]; // 현재 보드 상태
@@ -30,28 +32,34 @@ function Game() {
     const { timeLeft, resetTimer } = useTimer(10, handleTimeUp);
 
     /**
-     * handleClick - 지정된 인덱스(i)에 수를 둠.
+     * handleClick - 지정된 인덱스(i)에 첫 번째 클릭 시 미리보기로 표시, 두 번째 클릭 시 실제로 수를 둠.
      * @param {number} i - 클릭된 칸의 인덱스
      * @returns 
      */
     const handleClick = (i: number) => {
-      const newHistory = history.slice(0, stepNumber + 1);
-      const current = newHistory[newHistory.length - 1];
-      const squares = current.slice();
-  
-      // 이미 승자가 있거나 클릭된 칸이 채워져 있으면 동작하지 않음
-      if (winner || squares[i]) {
-        return;
-      }
-  
-      // X 또는 O 수를 둠
-      squares[i] = xIsNext ? 'X' : 'O';
+        const squaresCopy = [...currentSquares];
 
-      // 새로운 이력 업데이트 및 상태 관리
-      setHistory(newHistory.concat([squares]));
-      setStepNumber(newHistory.length);
-      setXIsNext(!xIsNext); 
-      resetTimer(); // 새로운 턴이 시작되면 타이머 리셋
+        // 이미 승자가 있거나 해당 칸이 차있으면 무시 (미리보기는 무시하지 않음)
+        if (winner || squaresCopy[i]) {
+            return;
+        }
+
+        if (previewIndex === i) {
+            // 미리보기를 두 번째로 클릭하면 실제로 수를 둠
+            squaresCopy[i] = xIsNext ? 'X' : 'O';
+            setHistory([...history.slice(0, stepNumber + 1), squaresCopy]);
+            setStepNumber(stepNumber + 1);
+            setXIsNext(!xIsNext);
+            setPreviewIndex(null);
+            setPreviewSquares(Array(9).fill(null)); // 미리보기 초기화
+            resetTimer(); // 턴을 넘기면서 타이머 리셋
+        } else {
+            // 첫 번째 클릭 시 미리보기로 수를 표시
+            const previewCopy = [...Array(9).fill(null)];
+            previewCopy[i] = xIsNext ? 'X' : 'O';
+            setPreviewIndex(i);
+            setPreviewSquares(previewCopy);
+        }
     };
   
     /**
@@ -91,21 +99,32 @@ function Game() {
         return currentSquares.every(square => square !== null) && !winner;
     }
     return (
-      <div className="game">
+        <div className="game">
         <div className="game-board">
-          <Board squares={currentSquares} onSquareClick={handleClick} winningSquares={winner ? winner.winningSquares : []}/> 
+            <Board
+                squares={currentSquares}
+                onSquareClick={handleClick}
+                previewSquares={previewSquares} // 미리보기 상태 전달
+                winningSquares={winner ? winner.winningSquares : []}
+            />
         </div>
         <div className="game-info">
-          <div>{winner ? `Winner: ${winner.winner}` : isDraw() ? 'Draw!' : `Next player: ${xIsNext ? 'X' : 'O'}`}</div>
-         
-          {!winner && !isDraw() && <Timer timeLeft={timeLeft} />}
-          
-          <button onClick={() => setAscending(!ascending)}>
-            Sort by: {ascending ? 'Ascending' : 'Descending'}
-          </button>
-          <ol>{renderMoves()}</ol>
+            <div>
+                {winner
+                    ? `Winner: ${winner.winner}`
+                    : isDraw()
+                    ? 'Draw!'
+                    : `Next player: ${xIsNext ? 'X' : 'O'}`}
+            </div>
+
+            {!winner && !isDraw() && <Timer timeLeft={timeLeft} />}
+
+            <button onClick={() => setAscending(!ascending)}>
+                Sort by: {ascending ? 'Ascending' : 'Descending'}
+            </button>
+            <ol>{renderMoves()}</ol>
         </div>
-      </div>
+    </div>
     );
   };  
 

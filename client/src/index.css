@@ -32,6 +32,11 @@ body {
   background-color: yellow;
 }
 
+.square.preview {
+  background-color: #d3d3d3; /* 연한 회색 */
+  color: #808080; /* 연한 회색의 글자색 */
+}
+
 .game {
   display: flex;
   flex-direction: row;

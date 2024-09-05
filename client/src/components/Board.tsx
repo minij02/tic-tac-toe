@@ -3,6 +3,7 @@ import Square from './Square';
 
 interface BoardProps {
     squares: ('X' | 'O' | null)[]; // 게임판의 상태를 나타내는 배열 (각 칸에 X, O 또는 null)
+    previewSquares: ('X' | 'O' | null)[]; // 미리보기 상태
     onSquareClick: (i: number) => void; // 클릭 이벤트를 처리하는 함수
     winningSquares: number[] | null; // 승리한 칸의 인덱스를 저장한 배열 또는 null
 }
@@ -16,10 +17,11 @@ interface BoardProps {
  * @param winningSquares - 승리한 칸들의 인덱스를 저장한 배열 (하이라이트 용도)
  */
 
-function Board({ squares, onSquareClick, winningSquares }: BoardProps) {
+function Board({ squares, previewSquares, onSquareClick, winningSquares }: BoardProps) {
 
     /**
      * renderSquare - 특정 인덱스(i)에 해당하는 Square 컴포넌트를 렌더링함.
+     * 이때 미리보기가 있으면 미리보기 값을 우선적으로 표시.
      * 승리한 칸을 하이라이트하기 위해 해당 칸이 winningSquares 배열에 포함되어 있는지 확인.
      * 
      * @param i - Square의 인덱스
@@ -28,11 +30,14 @@ function Board({ squares, onSquareClick, winningSquares }: BoardProps) {
     const renderSquare = (i: number) => {
       // 해당 Square가 승리한 칸인지 확인 (null인 경우 false로 처리)
       const isWinningSquare = winningSquares?.includes(i) ?? false;
+      const isPreview = previewSquares[i] !== null; // 미리보기 여부 확인
+      const value = isPreview ? previewSquares[i] : squares[i]; // 미리보기가 있으면 미리보기 표시
       return (
         <Square
-          value={squares[i]} // 현재 칸의 값 (X, O, null)
+          value={value} // 현재 칸의 값 (X, O, null)
           onClick={() => onSquareClick(i)} // 사용자가 클릭했을 때 호출되는 이벤트
           highlight={isWinningSquare}  // 하이라이트 여부 전달
+          isPreview={isPreview} // 미리보기 상태 전달
         />
       );
     };

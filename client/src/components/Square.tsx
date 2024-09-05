@@ -4,6 +4,7 @@ interface SquareProps {
     value: 'X' | 'O' | null; // 각 칸에 표시될 값 (X, O, 또는 null)
     onClick: () => void; // 클릭 시 실행될 함수 (부모 컴포넌트에서 전달)
     highlight: boolean; // 승리한 칸을 하이라이트 처리하는 플래그
+    isPreview: boolean;  // 미리보기 상태 여부
 }
 
 /**
@@ -15,7 +16,7 @@ interface SquareProps {
  * @param onClick - 사용자가 칸을 클릭했을 때 실행될 함수
  * @param highlight - 해당 칸이 승리한 칸인 경우 true로 설정 (하이라이트 적용)
  */
-function Square({ value, onClick, highlight }: SquareProps) {
+function Square({ value, onClick, highlight, isPreview }: SquareProps) {
 
     /**
      * 버튼을 렌더링하며, 'square' 클래스 외에도
@@ -24,7 +25,7 @@ function Square({ value, onClick, highlight }: SquareProps) {
      * @returns JSX.Element - 버튼 요소
      */
     return (
-        <button className={`square ${highlight ? 'highlight' :  ''}`} onClick={onClick}>
+        <button className={`square ${highlight ? 'highlight' :  ''} ${isPreview ? 'preview' :  ''}`} onClick={onClick}>
             {value}  
         </button>
     );
