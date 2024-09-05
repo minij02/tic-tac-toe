@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Board from './Board';
 import Timer from './Timer';
 import useTimer from '../hooks/useTimer';
 import calculateWinner from '../utils/calculateWinner';
+import { calculateBestMove } from '../utils/calculateBestMove'
+interface GameProps {
+    playerType: string | null; // vs Person or vs Computer
+    gameTime: number | null;   // 게임 시간 설정 (10s, 30s, 60s)
+  }
 
-function Game() {
+function Game({ playerType, gameTime }: GameProps) {
     // 게임 상태 관리: 이력, 현재 차례, 정렬 상태
     const [history, setHistory] = useState([Array(9).fill(null)]);
     const [stepNumber, setStepNumber] = useState(0);
@@ -30,9 +35,39 @@ function Game() {
     }
   
     // 타이머 설정: 각 플레이어에게 10초 제한 부여
-    const { timeLeft, resetTimer } = useTimer(10, handleTimeUp);
+    const { timeLeft, resetTimer } = useTimer(gameTime || 10, handleTimeUp);
+
+     // 컴퓨터의 차례인 경우 최적의 수를 두는 로직 추가
+    useEffect(() => {
+      if (!xIsNext && playerType === 'computer' && !winner) {
+        const randomDelay = Math.random() * (gameTime || 10) * 1000; // gameTime 내에서 랜덤 시간 (ms 단위)
+        const bestMove = calculateBestMove(currentSquares); // 컴퓨터의 최적 수 계산
+        
+        // 랜덤한 시간에 컴퓨터가 수를 두도록 setTimeout 사용
+      const timeoutId = setTimeout(() => {
+        makeComputerMove(bestMove);  // 컴퓨터가 최적의 수를 둠
+      }, randomDelay);
+
+      return () => clearTimeout(timeoutId); // cleanup 함수로 타이머를 제거
+    }
+  }, [xIsNext, playerType, currentSquares, winner, gameTime]);
+
+  /**
+   * 컴퓨터가 최적의 수를 두는 함수
+   * @param {number} i - 컴퓨터가 두어야 할 인덱스
+   */
+  const makeComputerMove = (i: number) => {
+    const squaresCopy = [...currentSquares];
+
+    squaresCopy[i] = 'O'; // 컴퓨터는 항상 O
+    setHistory([...history.slice(0, stepNumber + 1), squaresCopy]);
+    setStepNumber(stepNumber + 1);
+    setXIsNext(true); // 다시 사람 차례로 넘김
+    resetTimer(); // 컴퓨터가 수를 둔 후 타이머 리셋
+  };
 
     /**
+     * 사람이 수를 두는 함수
      * handleClick - 지정된 인덱스(i)에 첫 번째 클릭 시 미리보기로 표시, 두 번째 클릭 시 실제로 수를 둠.
      * @param {number} i - 클릭된 칸의 인덱스
      * @returns 
