@@ -4,7 +4,7 @@ import Timer from './Timer';
 import useTimer from '../hooks/useTimer';
 import calculateWinner from '../utils/calculateWinner';
 
-const Game: React.FC = () => {
+function Game() {
     // 게임 상태 관리: 이력, 현재 차례, 정렬 상태
     const [history, setHistory] = useState([Array(9).fill(null)]);
     const [stepNumber, setStepNumber] = useState(0);
@@ -20,8 +20,9 @@ const Game: React.FC = () => {
     const handleTimeUp = () => {
         // 빈 칸을 찾아서 자동으로 수를 둠
         const emptyIndex = currentSquares.findIndex((square) => square === null);
-        if (xIsNext) {
+        if (emptyIndex !== -1 && !winner) {
             handleClick(emptyIndex); // 빈 칸에 수를 둠
+            resetTimer(); // 시간이 다 되어 수를 둔 경우에도 타이머를 리셋
         }
     }
   
@@ -49,7 +50,8 @@ const Game: React.FC = () => {
       // 새로운 이력 업데이트 및 상태 관리
       setHistory(newHistory.concat([squares]));
       setStepNumber(newHistory.length);
-      setXIsNext(!xIsNext); // 새로운 턴이 시작되면 타이머 리셋
+      setXIsNext(!xIsNext); 
+      resetTimer(); // 새로운 턴이 시작되면 타이머 리셋
     };
   
     /**
@@ -95,7 +97,9 @@ const Game: React.FC = () => {
         </div>
         <div className="game-info">
           <div>{winner ? `Winner: ${winner.winner}` : isDraw() ? 'Draw!' : `Next player: ${xIsNext ? 'X' : 'O'}`}</div>
-          <Timer timeLeft={timeLeft} />
+         
+          {!winner && !isDraw() && <Timer timeLeft={timeLeft} />}
+          
           <button onClick={() => setAscending(!ascending)}>
             Sort by: {ascending ? 'Ascending' : 'Descending'}
           </button>
