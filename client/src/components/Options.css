@@ -1,0 +1,29 @@
+/* 옵션 전체를 감싸는 컨테이너 */
+.options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* 옵션 그룹 (플레이어 선택, 시간 선택) 간격 */
+  .option-group {
+    margin-bottom: 80px; /* 옵션 그룹 간의 간격 추가 */
+  }
+  
+  /* 각 버튼 간의 간격 */
+  .option-group button {
+    margin: 0 10px; /* 버튼 간의 좌우 간격 추가 */
+    padding: 10px 20px; /* 버튼의 내부 여백 조정 */
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  /* Start Game 버튼 스타일 */
+  .start-game-btn {
+    margin-top: 30px; /* Start 버튼을 위의 옵션들과 간격 조정 */
+    padding: 12px 24px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  

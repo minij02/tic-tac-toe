@@ -1,0 +1,23 @@
+/* .welcome 클래스는 전체 컴포넌트의 컨테이너로, 화면 중앙에 위치시킴 */
+.welcome {
+    display: flex; /* Flexbox로 자식 요소 배치 */
+    flex-direction: column; /* 자식 요소를 세로로 배치 */
+    align-items: center; /* 가로 방향으로 중앙 정렬 */
+    height: 100vh; /* 화면 전체 높이를 사용 */
+    position: relative; /* 자식 요소를 절대 위치로 배치할 수 있도록 함 */
+  }
+  
+  /* .button-container 클래스는 Start 버튼을 절대 위치로 설정하여 화면 하단으로 배치 */
+  .button-container {
+    position: absolute; /* 부모 요소(.welcome) 내에서 절대 위치 지정 */
+    bottom: 10%; /* 화면 하단에서 10% 위에 배치 */
+  }
+  
+  /* .start-btn 클래스는 Start 버튼의 스타일을 정의 */
+  .start-btn {
+    padding: 10px 20px; /* 버튼의 내부 여백 (상하 10px, 좌우 20px) */
+    font-size: 16px; /* 버튼 텍스트의 크기 설정 */
+    cursor: pointer; /* 마우스를 올렸을 때 커서를 포인터로 변경 */
+  }
+  
+  
