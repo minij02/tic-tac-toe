@@ -34,12 +34,17 @@ function Game({ playerType, gameTime }: GameProps) {
         }
     }
   
-    // 타이머 설정: 각 플레이어에게 10초 제한 부여
+    // 타이머 설정: 각 플레이어에게 시간 제한 부여
     const { timeLeft, resetTimer } = useTimer(gameTime || 10, handleTimeUp);
 
      // 컴퓨터의 차례인 경우 최적의 수를 두는 로직 추가
     useEffect(() => {
-      if (!xIsNext && playerType === 'computer' && !winner) {
+      // 게임이 끝났으면 아무 것도 하지 않음 (게임 종료 시)
+      if (stepNumber >= 9  || winner) {
+        return;
+      }
+
+      if (!xIsNext && playerType === 'computer' && !winner && stepNumber === history.length - 1) {
         const randomDelay = Math.random() * (gameTime || 10) * 1000; // gameTime 내에서 랜덤 시간 (ms 단위)
         const bestMove = calculateBestMove(currentSquares); // 컴퓨터의 최적 수 계산
         
@@ -50,7 +55,7 @@ function Game({ playerType, gameTime }: GameProps) {
 
       return () => clearTimeout(timeoutId); // cleanup 함수로 타이머를 제거
     }
-  }, [xIsNext, playerType, currentSquares, winner, gameTime]);
+  }, [xIsNext, playerType, currentSquares, winner, gameTime, history.length, stepNumber]);
 
   /**
    * 컴퓨터가 최적의 수를 두는 함수
@@ -60,7 +65,8 @@ function Game({ playerType, gameTime }: GameProps) {
     const squaresCopy = [...currentSquares];
 
     squaresCopy[i] = 'O'; // 컴퓨터는 항상 O
-    setHistory([...history.slice(0, stepNumber + 1), squaresCopy]);
+     // 기록을 덮어씌우지 않고 stepNumber까지 자르고, 그 다음 새로운 기록을 추가
+    setHistory(prevHistory => [...prevHistory.slice(0, stepNumber + 1), squaresCopy]);
     setStepNumber(stepNumber + 1);
     setXIsNext(true); // 다시 사람 차례로 넘김
     resetTimer(); // 컴퓨터가 수를 둔 후 타이머 리셋
@@ -73,13 +79,17 @@ function Game({ playerType, gameTime }: GameProps) {
      * @returns 
      */
     const handleClick = (i: number) => {
-        const squaresCopy = [...currentSquares];
-
-        // 이미 승자가 있거나 해당 칸이 차있으면 무시 (미리보기는 무시하지 않음)
-        if (winner || squaresCopy[i]) {
+      // 게임이 종료되었을 경우 더 이상 수를 두지 않음
+        if (winner || stepNumber >= 9) {
             return;
         }
 
+        const squaresCopy = [...currentSquares];
+
+        // 이미 승자가 있거나 해당 칸이 차있으면 무시 (미리보기는 무시하지 않음)
+        if (squaresCopy[i]) {
+          return;
+        }
         if (previewIndex === i) {
             // 미리보기를 두 번째로 클릭하면 실제로 수를 둠
             squaresCopy[i] = xIsNext ? 'X' : 'O';

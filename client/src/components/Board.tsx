@@ -13,6 +13,7 @@ interface BoardProps {
  * 이벤트를 처리하고, 승리한 칸을 하이라이트하는 역할을 한다.
  * 
  * @param squares - 현재 게임판의 상태
+ * @param previewSquares - 미리보기 상태
  * @param onSquareClick - 사용자가 특정 칸을 클릭했을 때 호출되는 함수
  * @param winningSquares - 승리한 칸들의 인덱스를 저장한 배열 (하이라이트 용도)
  */
