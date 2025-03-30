@@ -79,8 +79,8 @@ function Game({ playerType, gameTime }: GameProps) {
      * @returns 
      */
     const handleClick = (i: number) => {
-      // 게임이 종료되었을 경우 더 이상 수를 두지 않음
-        if (winner || stepNumber >= 9) {
+      // 게임이 종료되었거나 컴퓨터의 차례인 경우 더 이상 수를 두지 않음
+        if (winner || stepNumber >= 9 || (playerType === 'computer' && !xIsNext)) {
             return;
         }
 
