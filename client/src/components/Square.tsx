@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface SquareProps {
     value: 'X' | 'O' | null; // 각 칸에 표시될 값 (X, O, 또는 null)
     onClick: () => void; // 클릭 시 실행될 함수 (부모 컴포넌트에서 전달)

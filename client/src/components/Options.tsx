@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './Options.css'
 interface OptionsProps {
   // onConfirm은 선택한 플레이어 유형과 게임 시간을 전달하여 게임을 시작하는 함수
