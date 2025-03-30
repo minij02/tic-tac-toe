@@ -5,8 +5,8 @@ import useGameLogic from '../hooks/useGameLogic';
 import useComputerMove from '../hooks/useComputerMove';
 
 interface GameProps {
-  playerType: string | null; // vs Person or vs Computer
-  gameTime: number | null;   // 게임 시간 설정 (10s, 30s, 60s)
+  playerType: string; // vs Person or vs Computer
+  gameTime: number;   // 게임 시간 설정 (10s, 30s, 60s)
 }
 
 function Game({ playerType, gameTime }: GameProps) {
